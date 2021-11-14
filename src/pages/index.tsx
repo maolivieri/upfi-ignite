@@ -1,5 +1,5 @@
 import { Button, Box } from '@chakra-ui/react';
-import { useMemo } from 'react';
+import { FormEvent, useMemo } from 'react';
 import { useInfiniteQuery } from 'react-query';
 
 import { Header } from '../components/Header';
@@ -25,9 +25,14 @@ export default function Home(): JSX.Element {
         })
         .then(response => response.data),
     {
-      getNextPageParam: lastPage => lastPage.after ?? false,
+      getNextPageParam: lastPage => lastPage.after ?? null,
     }
   );
+
+  function loadMoreImages(event: FormEvent): void {
+    event.preventDefault();
+    fetchNextPage();
+  }
 
   const formattedData = useMemo(() => {
     // TODO FORMAT AND FLAT DATA ARRAY
@@ -57,7 +62,8 @@ export default function Home(): JSX.Element {
         {hasNextPage && (
           <Button
             type="button"
-            onClick={fetchNextPage}
+            // eslint-disable-next-line react/jsx-no-bind
+            onClick={loadMoreImages}
             mt="10"
             disabled={isFetchingNextPage}
           >
